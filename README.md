@@ -24,10 +24,12 @@ Run locally (Ruby version in `Dockerfile`), or in the container by prefixing wit
 |---|---|
 | Tests | `bundle exec rspec` |
 | Style / lint | `bundle exec rubocop` |
-| Code smells | `bundle exec reek` |
+| Code smells | `bundle exec reek .` |
 | Vulnerable gems | `bundle exec bundle-audit check --update` |
 
 Tests and linters don't need Postgres, Redis, or Solr running. CI runs all four in the dev image, and builds the production images, on every pull request and push to `main`.
+
+`lib/` must have 100% line and branch coverage. Every `rspec` run writes `coverage/index.html`; the minimum is only enforced when `CI` is set, so running a single spec file locally doesn't fail. To check locally: `CI=1 bundle exec rspec`.
 
 ### Security scanning and dependency updates
 

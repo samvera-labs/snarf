@@ -33,7 +33,8 @@ RUN --mount=type=cache,target=/usr/local/bundle/cache,uid=${UID},gid=${GID},shar
     bundle install
 
 FROM base AS dev
-RUN apk add --no-cache git
+RUN apk add --no-cache git \
+ && chown snarf:snarf /app
 ENV APP_ENV=development
 COPY --from=gems-dev --chown=snarf:snarf /usr/local/bundle /usr/local/bundle
 COPY --chown=snarf:snarf . .

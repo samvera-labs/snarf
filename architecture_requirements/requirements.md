@@ -256,7 +256,7 @@ bin/console
 
 ### Testing
 - **Framework**: RSpec
-- **Coverage**: High test coverage for core functionality
+- **Coverage**: 100% line and branch coverage of `lib/` (SimpleCov), enforced in CI
 - **Types**: Unit tests, integration tests, end-to-end tests
 - **Fixtures**: Test data for various scenarios
 - **Mocking**: Mock external services for fast, reliable tests

@@ -16,7 +16,7 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     env:
-      RUN: docker run --rm snarf-dev bundle exec
+      RUN: docker run --rm -e CI snarf-dev bundle exec
     steps:
       - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4
@@ -32,7 +32,7 @@ jobs:
       - name: RuboCop
         run: $RUN rubocop
       - name: Reek
-        run: $RUN reek
+        run: $RUN reek .
       - name: bundle-audit
         run: $RUN bundle-audit check --update
 
