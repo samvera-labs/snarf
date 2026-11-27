@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    env:
+      RUN: docker run --rm snarf-dev bundle exec
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          target: dev
+          tags: snarf-dev
+          load: true
+          cache-from: type=gha,scope=dev
+          cache-to: type=gha,scope=dev,mode=max
+      - name: RSpec
+        run: $RUN rspec
+      - name: RuboCop
+        run: $RUN rubocop
+      - name: Reek
+        run: $RUN reek
+      - name: bundle-audit
+        run: $RUN bundle-audit check --update
+
+  images:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [web, worker]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          target: ${{ matrix.target }}
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,scope=${{ matrix.target }},mode=max

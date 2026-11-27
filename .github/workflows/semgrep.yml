@@ -1,0 +1,24 @@
+name: Semgrep
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: semgrep-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    container: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test project rules
+        run: for rule in .semgrep/*.yml; do semgrep --test --config "$rule" "${rule%.yml}.rb"; done
+      - name: Scan
+        run: semgrep scan --config p/ruby --config .semgrep --exclude .semgrep --error --metrics off

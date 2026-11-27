@@ -1,0 +1,15 @@
+rules:
+  - id: sequel-sql-interpolation
+    languages: [ruby]
+    severity: ERROR
+    message: >-
+      Interpolated string used as raw SQL. Use placeholders (Sequel.lit('a = ?', x)),
+      hash conditions, or pg_json_ops for JSONB keys, and check field names against
+      the tenant schema.
+    pattern-either:
+      - pattern: Sequel.lit("...#{...}...", ...)
+      - pattern: $DB.run("...#{...}...", ...)
+      - pattern: $DB.fetch("...#{...}...", ...)
+      - pattern: $DB["...#{...}...", ...]
+      - pattern: $DS.where("...#{...}...", ...)
+      - pattern: $DS.exclude("...#{...}...", ...)

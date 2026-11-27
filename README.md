@@ -27,7 +27,18 @@ Run locally (Ruby version in `Dockerfile`), or in the container by prefixing wit
 | Code smells | `bundle exec reek` |
 | Vulnerable gems | `bundle exec bundle-audit check --update` |
 
-Tests and linters don't need Postgres, Redis, or Solr running.
+Tests and linters don't need Postgres, Redis, or Solr running. CI runs all four in the dev image, and builds the production images, on every pull request and push to `main`.
+
+### Security scanning and dependency updates
+
+- **CodeQL** scans Ruby and the workflows on every PR, push to `main`, and weekly. Results are under the repo's Security tab.
+- **Semgrep** runs the `p/ruby` rules plus project rules in `.semgrep/`. Each rule has a matching `.rb` file of `# ruleid:` / `# ok:` examples that CI tests. To run locally:
+
+  ```bash
+  docker run --rm -v "$PWD:/src" -w /src semgrep/semgrep semgrep scan --config p/ruby --config .semgrep --exclude .semgrep --metrics off
+  ```
+
+- **Renovate** (`renovate.json`) opens weekly PRs for gems, GitHub Actions, compose images, and the Ruby version in the `Dockerfile` (via its `# renovate:` comment). Security fixes skip the schedule.
 
 ## Production images
 
