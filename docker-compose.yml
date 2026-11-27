@@ -1,0 +1,84 @@
+x-hardening: &hardening
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+
+x-healthcheck: &healthcheck
+  interval: 2s
+  timeout: 5s
+  retries: 30
+
+x-app: &app
+  <<: *hardening
+  build:
+    context: .
+    target: dev
+    args:
+      UID: ${UID:-1000}
+      GID: ${GID:-1000}
+  environment:
+    DATABASE_URL: postgres://snarf:snarf@db:5432/snarf_development
+    REDIS_URL: redis://redis:6379/0
+    SOLR_URL: http://solr:8983/solr
+    LOG_FORMAT: color
+  volumes:
+    - .:/app
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    solr:
+      condition: service_healthy
+
+services:
+  db:
+    <<: *hardening
+    image: postgres:19-alpine
+    user: postgres
+    environment:
+      POSTGRES_USER: snarf
+      POSTGRES_PASSWORD: snarf
+      POSTGRES_DB: snarf_development
+    volumes:
+      - db:/var/lib/postgresql
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD-SHELL", "pg_isready -U snarf -d snarf_development"]
+
+  redis:
+    <<: *hardening
+    image: redis:8-alpine
+    user: redis
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "redis-cli", "ping"]
+
+  solr:
+    <<: *hardening
+    image: solr:10-slim
+    command: solr-precreate snarf
+    volumes:
+      - solr:/var/solr
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8983/solr/snarf/admin/ping"]
+
+  web:
+    <<: *app
+    command: bin/web
+    ports:
+      - "3000:3000"
+    healthcheck:
+      <<: *healthcheck
+      interval: 30s
+      start_period: 30s
+      start_interval: 1s
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/healthz"]
+
+  worker:
+    <<: *app
+    command: bin/worker
+
+volumes:
+  db:
+  solr:

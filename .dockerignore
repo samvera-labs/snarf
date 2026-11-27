@@ -1,0 +1,11 @@
+.git
+.github
+.ruby-lsp
+.tool-versions
+.dockerignore
+Dockerfile
+docker-compose*.yml
+architecture_requirements
+coverage
+log
+tmp
