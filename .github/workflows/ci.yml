@@ -20,7 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4
-      - uses: docker/build-push-action@v7
+      - name: Build dev image
+        uses: docker/build-push-action@v7
         with:
           target: dev
           tags: snarf-dev
@@ -35,17 +36,13 @@ jobs:
         run: $RUN reek .
       - name: bundle-audit
         run: $RUN bundle-audit check --update
-
-  images:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target: [web, worker]
-    steps:
-      - uses: actions/checkout@v7
-      - uses: docker/setup-buildx-action@v4
-      - uses: docker/build-push-action@v7
+      - name: Build web image
+        uses: docker/build-push-action@v7
         with:
-          target: ${{ matrix.target }}
-          cache-from: type=gha,scope=${{ matrix.target }}
-          cache-to: type=gha,scope=${{ matrix.target }},mode=max
+          target: web
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,scope=web,mode=max
+      - name: Build worker image
+        uses: docker/build-push-action@v7
+        with:
+          target: worker
