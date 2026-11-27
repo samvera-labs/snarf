@@ -1,8 +1,6 @@
 # syntax=docker/dockerfile:1
-# renovate: datasource=ruby-version depName=ruby
-ARG RUBY_VERSION=4.0.10
 
-FROM ruby:${RUBY_VERSION}-alpine AS base
+FROM ruby:4.0.10-alpine AS base
 ARG UID=1000
 ARG GID=1000
 RUN apk add --no-cache libpq tzdata \

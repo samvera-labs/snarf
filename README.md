@@ -40,7 +40,7 @@ Tests and linters don't need Postgres, Redis, or Solr running. CI runs all four 
   docker run --rm -v "$PWD:/src" -w /src semgrep/semgrep semgrep scan --config p/ruby --config .semgrep --exclude .semgrep --metrics off
   ```
 
-- **Renovate** (`renovate.json`) opens weekly PRs for gems, GitHub Actions, compose images, and the Ruby version in the `Dockerfile` (via its `# renovate:` comment). Security fixes skip the schedule.
+- **Dependabot** (`.github/dependabot.yml`) opens weekly PRs for gems (minor/patch grouped), GitHub Actions, and Docker images in the `Dockerfile` and `docker-compose.yml`. Keep the `Dockerfile`'s `FROM ruby:` tag literal so Dependabot can update it.
 
 ## Production images
 
