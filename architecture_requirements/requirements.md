@@ -31,7 +31,7 @@ Build a greenfield ingest microservice to replace Hyrax/Hyku ingest functionalit
 | Logging / metrics | `semantic_logger` (JSON); `prometheus-client`; OpenTelemetry |
 | Testing | RSpec, WebMock, FactoryBot; real Postgres, Solr, MinIO via docker compose |
 | Linting / static analysis | RuboCop (style, lint, `Security/*` cops) with rubocop-rspec and rubocop-sequel; Reek (code smells) |
-| Security scanning | CodeQL (GitHub code scanning; verify it detects Roda/Sequel taint with a planted vulnerability); Semgrep (Ruby rulesets + project rules for JSONB key interpolation, RLS bypass, manifest path traversal, SSRF, CSV formula injection, archive extraction); bundler-audit + Dependabot |
+| Security scanning | CodeQL (GitHub code scanning; verify it detects Roda/Sequel taint with a planted vulnerability); Semgrep (Ruby rulesets + project rules for JSONB key interpolation, RLS bypass, manifest path traversal, SSRF, CSV formula injection, archive extraction); bundler-audit + Renovate (weekly dependency PRs, OSV security updates) |
 
 ### Guardrails
 - No Rails, ActiveRecord, ActiveFedora, or Hyrax dependencies in the core service.
@@ -256,7 +256,7 @@ bin/console
 
 ### Testing
 - **Framework**: RSpec
-- **Coverage**: High test coverage for core functionality
+- **Coverage**: 100% line and branch coverage of `lib/` (SimpleCov), enforced in CI
 - **Types**: Unit tests, integration tests, end-to-end tests
 - **Fixtures**: Test data for various scenarios
 - **Mocking**: Mock external services for fast, reliable tests
