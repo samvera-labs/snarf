@@ -9,10 +9,10 @@ Pluggable batch ingest API for postgres, solr, and files.
 docker compose up
 ```
 
-Starts Postgres, Redis, Solr, the API (`web`), and the Sidekiq `worker`. The API is at http://localhost:3000 (`/healthz` for a health check).
+Starts Postgres, Redis, Solr, the API (`web`), and the Sidekiq `worker`. The API is at http://localhost:3000 (`/healthz` for a health check), and the Sidekiq dashboard at http://localhost:3000/jobs (user and password `snarf` in development).
 
 - Code is bind-mounted; restart `web`/`worker` to pick up changes.
-- Rebuild after changing `Gemfile` or `Gemfile.lock`: `docker compose build`
+- Rebuild after changing `Gemfile` or `Gemfile.lock` (including pulling someone else's change): `docker compose build`. A `Bundler::GemNotFound` on startup means the image is stale.
 - Console: `docker compose run --rm web bin/console`
 - On Linux, set `UID` and `GID` in `.env` to your own so files created in the container are owned by you.
 
@@ -67,3 +67,6 @@ docker build --target worker -t ghcr.io/samvera-labs/snarf-worker:TAG .
 | `PORT` | `3000` | |
 | `LOG_LEVEL` | `info` | |
 | `LOG_FORMAT` | `json` | `color` for readable dev logs |
+| `JOBS_DASHBOARD_USERNAME` | none | Sidekiq dashboard at `/jobs` (basic auth); not mounted unless all three are set |
+| `JOBS_DASHBOARD_PASSWORD` | none | |
+| `SESSION_SECRET` | none | At least 64 bytes, e.g. `ruby -rsecurerandom -e 'puts SecureRandom.hex(64)'` |

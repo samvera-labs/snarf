@@ -20,6 +20,9 @@ x-app: &app
     REDIS_URL: redis://redis:6379/0
     SOLR_URL: http://solr:8983/solr
     LOG_FORMAT: color
+    JOBS_DASHBOARD_USERNAME: snarf
+    JOBS_DASHBOARD_PASSWORD: snarf
+    SESSION_SECRET: development-only-session-secret-not-for-production-use-0123456789abcdef
   volumes:
     - .:/app
   depends_on:
